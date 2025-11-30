@@ -12,7 +12,7 @@ export function AppLayout() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-white/5 bg-slate-900/80 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-white/5 bg-slate-900/80 shadow-lg shadow-black/20 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
           <span className="text-xs uppercase tracking-[0.5em] text-slate-400">FitMind</span>
           <nav className="flex flex-1 items-center justify-end gap-3 text-sm">
