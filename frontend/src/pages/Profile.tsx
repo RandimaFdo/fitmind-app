@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Activity, Apple, Dumbbell, HeartPulse, UserCircle2 } from 'lucide-react'
+import { Activity, Apple, Dumbbell, HeartPulse, ScissorsSquare, UserCircle2 } from 'lucide-react'
 import { useFitness } from '../context/FitnessContext'
+import { useHairCare } from '../context/HairCareContext'
 
 const personalInfo = {
   name: 'Jordan Malik',
@@ -42,6 +43,7 @@ const mealPlan = [
 
 export function Profile() {
   const { plans, savedPlanIds, routinePlanIds } = useFitness()
+  const { history, salons } = useHairCare()
 
   const featuredFitnessPlan = useMemo(() => {
     if (!plans.length) return undefined
@@ -50,6 +52,16 @@ export function Profile() {
     const routinePlan = plans.find((plan) => routinePlanIds.includes(plan.id))
     return routinePlan ?? plans[0]
   }, [plans, savedPlanIds, routinePlanIds])
+
+  const latestHaircut = useMemo(() => {
+    if (!history.length) return undefined
+    return [...history].sort((a, b) => b.date.localeCompare(a.date))[0]
+  }, [history])
+
+  const latestSalon = useMemo(() => {
+    if (!latestHaircut) return undefined
+    return salons.find((salon) => salon.id === latestHaircut.salonId)
+  }, [latestHaircut, salons])
 
   return (
     <div className="space-y-8 px-4 py-8 text-white">
@@ -121,6 +133,70 @@ export function Profile() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="rounded-3xl border border-white/5 bg-slate-900/70 p-6">
+        <header className="flex items-center gap-3">
+          <ScissorsSquare className="h-6 w-6 text-brand-aqua" />
+          <div>
+            <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Hair grooming</p>
+            <h2 className="text-2xl font-semibold">Recent haircut & upkeep</h2>
+          </div>
+        </header>
+
+        {latestHaircut ? (
+          <div className="mt-6 grid gap-6 md:grid-cols-[1.2fr,1fr]">
+            <article className="space-y-3 rounded-2xl border border-white/5 bg-slate-900/60 p-5">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Last style</p>
+              <h3 className="text-2xl font-semibold">{latestHaircut.style}</h3>
+              <p className="text-sm text-slate-300">{latestHaircut.notes ?? 'Dialed in fade with clean edges.'}</p>
+              <dl className="mt-4 grid gap-3 text-sm text-slate-300">
+                <div className="flex items-center justify-between">
+                  <dt className="text-slate-400">Date</dt>
+                  <dd className="font-medium">{latestHaircut.date}</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-slate-400">Barber</dt>
+                  <dd className="font-medium">{latestHaircut.barber}</dd>
+                </div>
+                {latestSalon && (
+                  <div className="flex items-center justify-between">
+                    <dt className="text-slate-400">Salon</dt>
+                    <dd className="font-medium">{latestSalon.name}</dd>
+                  </div>
+                )}
+              </dl>
+            </article>
+
+            <article className="space-y-4 rounded-2xl border border-white/5 bg-slate-900/60 p-5">
+              <p className="text-xs uppercase tracking-[0.4em] text-slate-500">Next actions</p>
+              <ul className="space-y-2 text-sm text-slate-200">
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                  Book upkeep within 2 weeks to maintain blend
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                  Log beard trim or scalp ritual after session
+                </li>
+              </ul>
+              <Link
+                to="/hair-care"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-brand-aqua transition hover:text-white"
+              >
+                Manage hair routine
+              </Link>
+            </article>
+          </div>
+        ) : (
+          <div className="mt-6 rounded-2xl border border-dashed border-white/10 p-5 text-sm text-slate-400">
+            No haircut history yet. Capture your next style inside the{' '}
+            <Link to="/hair-care" className="text-brand-aqua">
+              Hair Care dashboard
+            </Link>{' '}
+            to keep grooming synced with wellness data.
+          </div>
+        )}
       </section>
 
       <section className="rounded-3xl border border-white/5 bg-slate-900/70 p-6">
