@@ -25,6 +25,9 @@ export function AppLayout() {
             <NavLink to="/fitness" className={linkClasses}>
               Fitness
             </NavLink>
+            <NavLink to="/hair-care" className={linkClasses}>
+              Hair Care
+            </NavLink>
             <NavLink
               to="/profile"
               className={({ isActive }) =>
